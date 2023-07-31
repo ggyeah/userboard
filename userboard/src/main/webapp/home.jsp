@@ -99,7 +99,20 @@
 			endPage = totalPage;
 		}
 		
-		// --------------3) boardlist 선택된 지역이름 10개 출력-----------------------------------------
+		
+		///4)-----------------정렬기능--------------------------------
+		/* 정렬기능을 위해 ORDER BY절에 넣을 변수 설정 */
+		   String col = "board_no";
+		   String ascDesc = "desc";
+		   
+		   if(request.getParameter("col") != null 
+		         && request.getParameter("ascDesc") != null) {
+		      col = request.getParameter("col");
+		      ascDesc = request.getParameter("ascDesc");
+		   }
+		   
+		   
+		// --------------4) boardlist 선택된 지역이름 10개 출력-----------------------------------------
 
 		// 2) 게시판 목록 결과셋(모델)
 		PreparedStatement boardStmt = null;
@@ -108,27 +121,27 @@
 		String boardSql = "";
 		if(localName.equals("전체")) {
 			 if (!searchWord.equals("")) {
-			        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE board_title LIKE ? ORDER BY board_no DESC LIMIT ?, ?";
+			        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE board_title LIKE ? ORDER BY "+col+" "+ascDesc+"  LIMIT ?, ?";
 			        boardStmt = conn.prepareStatement(boardSql);
 			        boardStmt.setString(1, "%" + searchWord + "%");
 			        boardStmt.setInt(2, beginRow);
 			        boardStmt.setInt(3, rowPerPage);
 			    } else {
-			        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board ORDER BY board_no DESC LIMIT ?, ?";
+			        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board ORDER BY "+col+" "+ascDesc+"  LIMIT ?, ?";
 			        boardStmt = conn.prepareStatement(boardSql);
 			        boardStmt.setInt(1, beginRow);
 			        boardStmt.setInt(2, rowPerPage);
 			    }
 		} else {
 		    if (!searchWord.equals("")) {
-		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? AND board_title LIKE ? ORDER BY board_no DESC LIMIT ?, ?";
+		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? AND board_title LIKE ? ORDER BY"+col+" "+ascDesc+"  LIMIT ?, ?";
 		        boardStmt = conn.prepareStatement(boardSql);
 		        boardStmt.setString(1, localName);
 		        boardStmt.setString(2, "%" + searchWord + "%");
 		        boardStmt.setInt(3, beginRow);
 		        boardStmt.setInt(4, rowPerPage);
 		    } else {
-		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? ORDER BY board_no DESC LIMIT ?, ?";
+		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? ORDER BY "+col+" "+ascDesc+"  LIMIT ?, ?";
 		        boardStmt = conn.prepareStatement(boardSql);
 		        boardStmt.setString(1, localName);
 		        boardStmt.setInt(2, beginRow);
@@ -152,6 +165,9 @@
 		//디버깅
 		System.out.println(boardList);
 		System.out.println(boardList.size());
+		
+
+		
 		%>
 <!DOCTYPE html>
 <html>
@@ -192,16 +208,31 @@
 				<div class="table-wrapper">
 		  		 <table>
 					<tr>
-						<th>board_no</th>
-						<th>local_name</th>
-						<th>board_title</th>
+						<th>
+							 <a href="./home.jsp?col=board_no&ascDesc=ASC&boardNo=<%=boardList.get(0).getBoardNo()%>&localName=<%=localName%>">&#11014;</a>
+								board_no
+							 <a href="./home.jsp?col=board_no&ascDesc=Desc&boardNo=<%=boardList.get(0).getBoardNo()%>&localName=<%=localName%>">&#11015;</a>
+						</th>
+						<th>
+							 <a href="./home.jsp?col=local_name&ascDesc=ASC&localName=<%=boardList.get(0).getLocalName()%>&localName=<%=localName%>">&#11014;</a>
+								local_name
+							<a href="./home.jsp?col=local_name&ascDesc=Desc&boardNo=<%=boardList.get(0).getLocalName()%>&localName=<%=localName%>">&#11015;</a>
+						</th>
+						<th>
+							<a href="./home.jsp?col=board_title&ascDesc=ASC&boardTitle=<%=boardList.get(0).getBoardTitle()%>&localName=<%=localName%>">&#11014;</a>
+								board_title
+							<a href="./home.jsp?col=board_title&ascDesc=Desc&boardTitle=<%=boardList.get(0).getBoardTitle()%>&localName=<%=localName%>">&#11015;</a>
+						</th>
 					</tr>
 					<%
 						for(Board b : boardList) {
 					%>
 					<tr>
-						<td><%=b.getBoardNo()%></td>
-						<td><a href="<%=request.getContextPath()%>/local/localOne.jsp?localName=<%=b.getLocalName()%>">
+						<td>
+							<%=b.getBoardNo()%>
+						</td>
+						<td>
+							<a href="<%=request.getContextPath()%>/local/localOne.jsp?localName=<%=b.getLocalName()%>">
 								<%=b.getLocalName()%>
 							</a>
 						</td>
