@@ -170,7 +170,14 @@
 				<div class="inner">
 		<!-- Header -->
 				<header id="header">
-					<a href="home.jsp" class="logo"><strong>userboard</strong></a> 						 
+					<a href="home.jsp" class="logo"><strong>userboard</strong></a> 	
+					<%
+					     if(session.getAttribute("loginMemberId") != null) { // 로그인 상태여야만 게시글 추가가 보임
+					 %>
+					     <a href="<%=request.getContextPath()%>/board/addBoard.jsp" class="button small"> &#10133; 게시글 추가</a>
+					 <%
+					      	}
+					  %>					 
 					   <div>
 					      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
 					   </div>
