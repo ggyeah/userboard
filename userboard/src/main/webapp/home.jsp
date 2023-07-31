@@ -3,6 +3,9 @@
 <%@ page import = "java.util.*" %>
 <%@ page import = "vo.*" %>
 	<%
+	// 인코딩 처리 // 한글이 깨지지 않도록
+	request.setCharacterEncoding("UTF-8"); 
+	
 	//1. 요청분석 (컨트롤러 계층)
 		//1) session JSP내장(기본)객체
 		//2) request / response
@@ -17,6 +20,11 @@
 			localName = request.getParameter("localName");		
 		}
 
+		String searchWord ="";
+		if(request.getParameter("searchWord") != null) {
+			searchWord = request.getParameter("searchWord");
+		}
+		
 		//2. 모델계층
 		//db연결
 		String driver = "org.mariadb.jdbc.Driver";
@@ -99,36 +107,52 @@
 		// 이름값에 따라 10개까지 출력하는 쿼리
 		String boardSql = "";
 		if(localName.equals("전체")) {
-			boardSql = "SELECT board_no boardNo, local_name localName,board_title boardTitle,createdate FROM board ORDER BY board_no DESC LIMIT ?, ?";
-			boardStmt = conn.prepareStatement(boardSql);
-			boardStmt.setInt(1, beginRow);
-			boardStmt.setInt(2, rowPerPage);
+			 if (!searchWord.equals("")) {
+			        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE board_title LIKE ? ORDER BY board_no DESC LIMIT ?, ?";
+			        boardStmt = conn.prepareStatement(boardSql);
+			        boardStmt.setString(1, "%" + searchWord + "%");
+			        boardStmt.setInt(2, beginRow);
+			        boardStmt.setInt(3, rowPerPage);
+			    } else {
+			        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board ORDER BY board_no DESC LIMIT ?, ?";
+			        boardStmt = conn.prepareStatement(boardSql);
+			        boardStmt.setInt(1, beginRow);
+			        boardStmt.setInt(2, rowPerPage);
+			    }
 		} else {
-			boardSql = "SELECT board_no boardNo, local_name localName,board_title boardTitle,createdate FROM board WHERE local_name = ? ORDER BY board_no DESC LIMIT ?, ?";
-			boardStmt = conn.prepareStatement(boardSql);
-			boardStmt.setString(1, localName);
-			boardStmt.setInt(2, beginRow);
-			boardStmt.setInt(3, rowPerPage);
+		    if (!searchWord.equals("")) {
+		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? AND board_title LIKE ? ORDER BY board_no DESC LIMIT ?, ?";
+		        boardStmt = conn.prepareStatement(boardSql);
+		        boardStmt.setString(1, localName);
+		        boardStmt.setString(2, "%" + searchWord + "%");
+		        boardStmt.setInt(3, beginRow);
+		        boardStmt.setInt(4, rowPerPage);
+		    } else {
+		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? ORDER BY board_no DESC LIMIT ?, ?";
+		        boardStmt = conn.prepareStatement(boardSql);
+		        boardStmt.setString(1, localName);
+		        boardStmt.setInt(2, beginRow);
+		        boardStmt.setInt(3, rowPerPage);
+		    }
 		}
+
 		// db쿼리 결과셋 모델
 		boardRs = boardStmt.executeQuery();
 		// 애플리케이션에서 사용할 모델(사이즈 0)
 		ArrayList<Board> boardList = new ArrayList<Board>();
 		// boardRs->boardList
-		while(boardRs.next()) {
-			Board b = new Board();
-			b.setBoardNo(boardRs.getInt("boardNo"));
-			b.setLocalName(boardRs.getString("localName"));
-			b.setBoardTitle(boardRs.getString("boardTitle"));
-			b.setCreatedate(boardRs.getString("createdate"));
-			boardList.add(b);
+		while (boardRs.next()) {
+		    Board b = new Board();
+		    b.setBoardNo(boardRs.getInt("boardNo"));
+		    b.setLocalName(boardRs.getString("localName"));
+		    b.setBoardTitle(boardRs.getString("boardTitle"));
+		    b.setCreatedate(boardRs.getString("createdate"));
+		    boardList.add(b);
 		}
-	 	//디버깅
-	 	System.out.println(boardList);
-	 	System.out.println(boardList.size());
-	 	
-
-	%>
+		//디버깅
+		System.out.println(boardList);
+		System.out.println(boardList.size());
+		%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -147,13 +171,6 @@
 		<!-- Header -->
 				<header id="header">
 					<a href="home.jsp" class="logo"><strong>userboard</strong></a> 						 
-					<%
-					     if(session.getAttribute("loginMemberId") != null) { // 로그인 상태여야만 게시글 추가가 보임
-					 %>
-					     <a href="<%=request.getContextPath()%>/board/addBoard.jsp" class="button small"> &#10133; 게시글 추가</a>
-					 <%
-					      	}
-					  %>
 					   <div>
 					      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
 					   </div>
@@ -162,7 +179,7 @@
 			<div class="content">
 				<header>
 				<!-- 지역별 게시글 10개씩  -->
-				  <h2>게시글목록</h2>
+				  <h2><%=localName%> 게시글목록</h2>
 				 </header>
 			     <!-- Banner -->
 				<div class="table-wrapper">
@@ -191,34 +208,46 @@
 						}
 					%>
 				</table>
-		<!--------------------------------- 페이징 ----------------------------------------->
-			<ul class="pagination">		
-				<% //현재 페이지가 페이지네이션 숫자 범위를 넘어섰을 때만 이전 버튼이 표시
-	     			 if(currentPage > pagePerPage) {
-	   			%>	
-					<li><a href="./home.jsp?currentPage=<%=beginPage-10%>&localName=<%=localName%>"  class="button">이전</a></li>
-			   	<%
-	     			} for(int i = beginPage; i <= endPage; i++){
-	        	if(i==currentPage){
-			    %>
-	         		<li><span class="page active"><%=i%></span></li>
-			    <%
-			        	}else{
-			   	%>  
-			   		<li><a href="./home.jsp?currentPage=<%=i%>&localName=<%=localName%>" class="page"><%=i%></a></li>
-			   	 <% 
-		       			}
-		       		} //현재 페이지가 마지막 페이지를 넘지 않았을 때만 다음 버튼이 표시
-		      if(currentPage < (lastPage-pagePerPage+1)) {  
-			  	 %>
-					<li><a href="./home.jsp?currentPage=<%=endPage+1%>&localName=<%=localName%>" class="button">다음</a></li>
-				 <%
-	      			}
-	   			 %>
-		</ul>													
+				<!----------------------- 검색기능 ---------------------->
+					<form method="get" action="./home.jsp">
+						<div class="row gtr-uniform">
+							<div class="col-6 col-12-xsmall">
+								<input type="hidden" name="localName" value="<%=localName%>">
+													<input type="text" name="searchWord" value="<%=searchWord%>" placeholder="Search">
+							</div>
+							<div class="col-6 col-12-xsmall">
+								<button type="submit">조회</button>
+							</div>
+						</div>
+					</form>
+				<!--------------------------------- 페이징 ----------------------------------------->
+					<ul class="pagination">		
+						<% //현재 페이지가 페이지네이션 숫자 범위를 넘어섰을 때만 이전 버튼이 표시
+			     			 if(currentPage > pagePerPage) {
+			   			%>	
+							<li><a href="./home.jsp?currentPage=<%=beginPage-10%>&localName=<%=localName%>"  class="button">이전</a></li>
+					   	<%
+			     			} for(int i = beginPage; i <= endPage; i++){
+			        	if(i==currentPage){
+					    %>
+			         		<li><span class="page active"><%=i%></span></li>
+					    <%
+					        	}else{
+					   	%>  
+					   		<li><a href="./home.jsp?currentPage=<%=i%>&localName=<%=localName%>" class="page"><%=i%></a></li>
+					   	 <% 
+				       			}
+				       		} //현재 페이지가 마지막 페이지를 넘지 않았을 때만 다음 버튼이 표시
+				      if(currentPage < (lastPage-pagePerPage+1)) {  
+					  	 %>
+							<li><a href="./home.jsp?currentPage=<%=endPage+1%>&localName=<%=localName%>" class="button">다음</a></li>
+						 <%
+			      			}
+			   			 %>
+				</ul>										
+			</div>
 		</div>
 	</div>
-</div>
 </div>															
 <!-- Sidebar ---------------------------------------------------------------->
 	<div id="sidebar">
