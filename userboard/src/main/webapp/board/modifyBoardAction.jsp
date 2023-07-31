@@ -3,6 +3,10 @@
 <%@ page import = "java.net.*" %>
 <%@ page import = "vo.*" %>
 <%
+	//인코딩 처리 // 한글이 깨지지 않도록
+	request.setCharacterEncoding("UTF-8"); 
+	response.setCharacterEncoding("utf-8");
+	
 	//세션 유효성 검사 로그인이 되어있지 않으면 들어올 수 없음
 	if(session.getAttribute("loginMemberId") == null) {
 		response.sendRedirect(request.getContextPath() + "/home.jsp");

@@ -48,14 +48,16 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
-<div class = "container"> 
-<h2>회원정보</h2>
+<div id="main">
+	<div class="inner">
+	<header id="header">
+		<span class="logo"><strong>userboard</strong> </span>
+		   <div>
+		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+		   </div>
+	</header>
+	<div class = "container"> 
+		<h2>회원정보</h2>
 			<table class ="table">
 	            <tr>
 	               <th class="table-secondary">아이디</th>
@@ -74,6 +76,11 @@
 				<a href="updatePwForm.jsp" class="btn btn-outline-danger">비밀번호수정</a>
 				<a href="deleteMemberForm.jsp" class="btn btn-outline-danger">회원탈퇴</a>
 			</div>
+			<div>
+	      <jsp:include page="/inc/copyright.jsp"></jsp:include>
+	   </div>
+	</div>
+</div>
 </div>  
 </body>
 </html>

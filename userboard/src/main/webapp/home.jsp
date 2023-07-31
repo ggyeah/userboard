@@ -251,7 +251,8 @@
 						<div class="row gtr-uniform">
 							<div class="col-6 col-12-xsmall">
 								<input type="hidden" name="localName" value="<%=localName%>">
-													<input type="text" name="searchWord" value="<%=searchWord%>" placeholder="Search">
+								<input type="hidden" name="ascDesc" value="<%=ascDesc%>">
+								<input type="text" name="searchWord" value="<%=searchWord%>" placeholder="Search">
 							</div>
 							<div class="col-6 col-12-xsmall">
 								<button type="submit">조회</button>

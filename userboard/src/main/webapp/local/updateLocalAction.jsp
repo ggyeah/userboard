@@ -3,8 +3,9 @@
 <%@ page import = "vo.*" %>
 <%@ page import = "java.net.*" %>
 <%
-	// request 인코딩 설정// 글씨가 깨지지 않도록함
-	request.setCharacterEncoding("UTF-8");
+	//인코딩 처리 // 한글이 깨지지 않도록
+	request.setCharacterEncoding("UTF-8"); 
+	response.setCharacterEncoding("utf-8");
 
 	//로그인상태가 아니면 들어올수없음
 	if(session.getAttribute("loginMemberId") == null) {

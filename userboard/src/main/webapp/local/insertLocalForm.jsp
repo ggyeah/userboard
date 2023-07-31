@@ -17,12 +17,12 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
+	<header id="header">
+		<span class="logo"><strong>userboard</strong> </span>
+		   <div>
+		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+		   </div>
+	</header>
 
 	<h2>새 카테고리 추가</h2>
 	<form action="<%=request.getContextPath()%>/local/insertLocalAction.jsp" method="post">

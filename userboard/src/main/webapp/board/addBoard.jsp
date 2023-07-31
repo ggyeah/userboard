@@ -9,13 +9,7 @@
 </head>
 <body class="is-preload">
 	<header id="header">
-		<span class="logo"><strong>userboard</strong> 						 <%
-		     if(session.getAttribute("loginMemberId") != null) { // 로그인 상태여야만 게시글 추가가 보임
-		 %>
-		     <a href="<%=request.getContextPath()%>/board/addBoard.jsp" class="button small">+ 게시글 추가</a>
-		 <%
-		      	}
-		  %></span>
+		<span class="logo"><strong>userboard</strong> </span>
 		   <div>
 		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
 		   </div>

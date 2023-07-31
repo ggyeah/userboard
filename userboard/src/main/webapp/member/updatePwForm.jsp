@@ -19,12 +19,12 @@
 
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
+	<header id="header">
+		<span class="logo"><strong>userboard</strong> </span>
+		   <div>
+		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+		   </div>
+	</header>
    
 	<form action="./updatePwAction.jsp" method="post">
 	<h2>비밀번호 수정</h2>

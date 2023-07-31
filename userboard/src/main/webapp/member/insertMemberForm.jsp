@@ -8,15 +8,18 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
+<div id="main">
+	<div class="inner">
+		<header id="header">
+			<span class="logo"><strong>userboard</strong> </span>
+			   <div>
+			      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+			   </div>
+		</header>
   	<%
          if(session.getAttribute("loginMemberId") == null) { // 로그인전이여야 회원가입폼출력
  	 %>
+ 	 <div class="center">
 	<h2>회원가입</h2>
 	<% // 오류메세지 출력
 		if(request.getParameter("msg") != null) {
@@ -26,7 +29,7 @@
 		}
 	%>
 	<form action="<%=request.getContextPath()%>/member/insertMemberAction.jsp" method="post">
-		<table style="width:30%">
+		<table style="width:40%">
 			<tr>
 				<td>아이디</td>
 				<td><input type="text" name="memberId"></td>
@@ -38,20 +41,21 @@
 		</table>
 		<button type="submit" class="button">회원가입</button>
 	</form>
-  <%   
-         }
-  %>
-  
-	<div>
-      <jsp:include page="/inc/copyright.jsp"></jsp:include>
+	  <%   
+	         }
+	  %>
+	</div>  
+		<div>
+	      <jsp:include page="/inc/copyright.jsp"></jsp:include>
+	   </div>
    </div>
-   
-   			<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+</div>
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
    
 </body>
 </html>

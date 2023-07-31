@@ -52,22 +52,21 @@
 </head>
 <body>
 <body class="is-preload">
-
-		<header id="header">
-			<span class="logo"><strong>userboard</strong> 						 <%
-			     if(session.getAttribute("loginMemberId") != null) { // 로그인 상태여야만 게시글 추가가 보임
-			 %>
-			     <a href="<%=request.getContextPath()%>/board/addBoard.jsp" class="button small">+ 게시글 추가</a>
-			 <%
-			      	}
-			  %></span>
-			   <div>
-			      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-			   </div>
-		</header>
-<div class = "container"> 
-     <!--  삭제전 기존데이터 보여주기 -->
-     <table  class="table table-bordered ">
+	<header id="header">
+		<span class="logo"><strong>userboard</strong> 						 <%
+		     if(session.getAttribute("loginMemberId") != null) { // 로그인 상태여야만 게시글 추가가 보임
+		 %>
+		     <a href="<%=request.getContextPath()%>/board/addBoard.jsp" class="button small">+ 게시글 추가</a>
+		 <%
+		      	}
+		  %></span>
+		   <div>
+		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+		   </div>
+	</header>
+	<div class = "container"> 
+	     <!--  삭제전 기존데이터 보여주기 -->
+	     <table  class="table table-bordered ">
 			<tr>
 				<td>게시글번호</td>
 				<td><%=b.getBoardNo()%></td>
@@ -97,16 +96,16 @@
 				<td><%=b.getUpdatedate()%></td>
 			</tr>
 		</table>
-	<form action= "<%=request.getContextPath()%>/board/removeBoardAction.jsp?boardNo=<%=boardNo%>" method="post">
-	<h2>게시글삭제</h2>
-		<table  class="table table-bordered ">
-	<% // 오류메세지 출력
-	if(request.getParameter("msg") != null) {
-	%>
-		<%=request.getParameter("msg")%>
-	<%		
-		}
-	%>
+		<form action= "<%=request.getContextPath()%>/board/removeBoardAction.jsp?boardNo=<%=boardNo%>" method="post">
+		<h2>게시글삭제</h2>
+			<table  class="table table-bordered ">
+		<% // 오류메세지 출력
+		if(request.getParameter("msg") != null) {
+		%>
+			<%=request.getParameter("msg")%>
+		<%		
+			}
+		%>
 			<tr> 
 				<td>작성자 확인</td>
 		        <td>
@@ -118,7 +117,7 @@
 		              <button type="submit" class="btn btn-danger">삭제</button>
 				</td>
 			</tr>
-	</table>
+		</table>
 	</form>
 </div>
 </body>

@@ -48,12 +48,12 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
+	<header id="header">
+		<span class="logo"><strong>userboard</strong> </span>
+		   <div>
+		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+		   </div>
+	</header>
     <div class = "container">
 	<h2><%=l.getLocalName()%>삭제</h2>
 	<div>

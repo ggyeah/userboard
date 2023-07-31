@@ -37,22 +37,26 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
+<div id="main">
+	<div class="inner">
+	<header id="header">
+		<span class="logo"><strong>userboard</strong>
+			<%
+	    	 	if(session.getAttribute("loginMemberId") != null) { // 로그인을해야 새 카테고리 추가 폼이 보임
+	    	 %>
+				<a href="<%=request.getContextPath()%>/local/insertLocalForm.jsp" class="button small">&#10133;카테고리추가</a>
+			 <%
+		    	  }
+		     %>
+	      </span>
+		   <div>
+		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+		   </div>
+	</header>
 
 <!-------------------------------------------- localList  ------------------------------------------->
 	<h2>카테고리 목록
-	 	 <%
-    	 if(session.getAttribute("loginMemberId") != null) { // 로그인을해야 새 카테고리 추가 폼이 보임
-    	 %>
-		<a href="<%=request.getContextPath()%>/local/insertLocalForm.jsp" class="button small">&#10133;카테고리추가</a>
-		 <%
-	      }
-	     %>
+
 	</h2>
 	<div class="text-danger">
 		<%
@@ -76,35 +80,36 @@
 			<%
 				for(Local l : localList) {
 			%>
-					<tr>
-						<td><a href="<%=request.getContextPath()%>/local/localOne.jsp?localName=<%=l.getLocalName()%>">
-						<%=l.getLocalName()%></a></td>
-						<td><%=l.getCreatedate()%></td>
-					<% // 로그인 사용자만 수정,삭제,댓글입력허용
-						if(session.getAttribute("loginMemberId") != null) {
-
-					%>
-						<td>
-							<a href="<%=request.getContextPath()%>/local/updateLocalForm.jsp?localName=<%=l.getLocalName()%>" class="btn">
-							수정</a>
-						</td>
-						<td>
-							<a href="<%=request.getContextPath()%>/local/deleteLocalForm.jsp?localName=<%=l.getLocalName()%>" class="btn">
-							삭제</a>
-						</td>
-					<%
-	                          } 
-                     %>
-					</tr>
+				<tr>
+					<td><a href="<%=request.getContextPath()%>/local/localOne.jsp?localName=<%=l.getLocalName()%>">
+					<%=l.getLocalName()%></a></td>
+					<td><%=l.getCreatedate()%></td>
+				<% // 로그인 사용자만 수정,삭제,댓글입력허용
+					if(session.getAttribute("loginMemberId") != null) {
+	
+				%>
+					<td>
+						<a href="<%=request.getContextPath()%>/local/updateLocalForm.jsp?localName=<%=l.getLocalName()%>" class="btn">
+						수정</a>
+					</td>
+					<td>
+						<a href="<%=request.getContextPath()%>/local/deleteLocalForm.jsp?localName=<%=l.getLocalName()%>" class="btn">
+						삭제</a>
+					</td>
+				<%
+	                         } 
+	                   %>
+				</tr>
 			<%
 				}
 			%>
 		</tbody>
 	</table>	
-
-<div>
-	<!-- 액션태그 -->
-	<jsp:include page="/inc/copyright.jsp"></jsp:include>
+		<div>
+		<!-- 액션태그 -->
+			<jsp:include page="/inc/copyright.jsp"></jsp:include>
+		</div>
+	</div>
 </div>
 </body>
 </html>

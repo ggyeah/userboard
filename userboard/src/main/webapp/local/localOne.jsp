@@ -49,40 +49,46 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
-<div class = "container">
-<h2>상세보기</h2>
-			<table class ="table">
-				<tr>
-	               <th class="table-secondary">지역이름</th>
-	               <td><%=local.getLocalName()%></td>
-	            </tr>
-				 <tr>
-	               <th class="table-secondary">생성일</th>
-	               <td><%=local.getCreatedate()%></td>
-	            </tr>
-	            <tr>
-	               <th class="table-secondary">수정일</th>
-	               <td><%=local.getUpdatedate()%></td>
-	            </tr>
-			</table>
+<div id="main">
+	<div class="inner">
+		<header id="header">
+			<span class="logo"><strong>userboard</strong> </span>
+			   <div>
+			      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+			   </div>
+		</header>
+	<div class = "container">
+	<h2>상세보기</h2>
+		<table class ="table">
+			<tr>
+               <th class="table-secondary">지역이름</th>
+               <td><%=local.getLocalName()%></td>
+            </tr>
+			 <tr>
+               <th class="table-secondary">생성일</th>
+               <td><%=local.getCreatedate()%></td>
+            </tr>
+            <tr>
+               <th class="table-secondary">수정일</th>
+               <td><%=local.getUpdatedate()%></td>
+            </tr>
+		</table>
 		<% // 로그인 사용자만 수정,삭제,댓글입력허용
 		if(session.getAttribute("loginMemberId") != null) {
 			// 현재 로그인 사용자의 아이디
 		%>
 			<div>
-				<a href="<%=request.getContextPath()%>/local/insertLocalFrom.jsp?localName=<%=local.getLocalName()%>" class="btn btn-outline-danger">지역추가</a>
 				<a href="<%=request.getContextPath()%>/local/updateLocalForm.jsp?localName=<%=local.getLocalName()%>" class="btn btn-outline-danger">지역이름수정</a>
 				<a href="<%=request.getContextPath()%>/local/deleteLocalForm.jsp?localName=<%=local.getLocalName()%>" class="btn btn-outline-danger">지역삭제</a>
 			</div>	
 		<%
 			} 
 		%>
+		</div>
+		<div>
+	      <jsp:include page="/inc/copyright.jsp"></jsp:include>
+	   </div>
+	</div>
 </div>
 </body>
 </html>

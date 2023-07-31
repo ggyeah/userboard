@@ -3,7 +3,8 @@
 <%@ page import = "java.sql.*" %>
 <%@ page import = "java.util.*" %>
 <%@ page import = "vo.*" %>
-<%
+<%	// 인코딩 처리 // 한글이 깨지지 않도록
+	request.setCharacterEncoding("UTF-8"); 
 	response.setCharacterEncoding("utf-8");
     // 세션 유효성 검사 로그인 되어있지 않으면 들어올 수 없음
    	if(session.getAttribute("loginMemberId") == null) {
@@ -50,12 +51,12 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
+	<header id="header">
+		<span class="logo"><strong>userboard</strong> </span>
+		   <div>
+		      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+		   </div>
+	</header>
  <div class = "container">
 <form action="<%=request.getContextPath()%>/local/updateLocalAction.jsp" method="post">
 	<h2>지역수정</h2>

@@ -101,9 +101,10 @@
     if(rs2.next()) {
        totalRow = rs2.getInt("count(*)");
     }
+    
     int lastPage = totalRow / rowPerPage;
-    if(totalRow % rowPerPage != 0) {
-       lastPage = lastPage + 1;
+    if(totalRow % rowPerPage != 0 || lastPage == 0) {
+      lastPage = lastPage + 1;
     }
 
 	//3. 뷰 계층
@@ -117,21 +118,22 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
 </head>
 <body class="is-preload">
-
-					<header id="header">
-						<span class="logo"><strong>userboard</strong> 						
-						 <%
-						     if(session.getAttribute("loginMemberId") != null) { // 로그인 상태여야만 게시글 추가가 보임
-						 %>
-						     <a href="<%=request.getContextPath()%>/board/addBoard.jsp" class="button small">+ 게시글 추가</a>
-						 <%
-						      	}
-						  %>
-						 </span>
-						   <div>
-						      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
-						   </div>
-					</header>
+	<div id="main">
+		<div class="inner">
+		<header id="header">
+			<span class="logo"><strong>userboard</strong> 						
+			 <%
+			     if(session.getAttribute("loginMemberId") != null) { // 로그인 상태여야만 게시글 추가가 보임
+			 %>
+			     <a href="<%=request.getContextPath()%>/board/addBoard.jsp" class="button small">+ 게시글 추가</a>
+			 <%
+			      	}
+			  %>
+			 </span>
+			   <div>
+			      <jsp:include page="/inc/mainmenu.jsp"></jsp:include>
+			   </div>
+		</header>
 	<div class = "container">
 <!---------------------------3-1 [시작] board one 결과셋--------------------- -->
 	<h2>상세보기</h2>
@@ -165,21 +167,24 @@
 	               <td><%=board.getUpdatedate()%></td>
 	            </tr>
 			</table>
-		<% // 로그인 사용자만 수정,삭제,댓글입력허용
-		if(session.getAttribute("loginMemberId")==(board.getMemberId())){
-
-		%>
+			<% // 본인이 작성한 게시글만 수정,삭제허용
+			if (session.getAttribute("loginMemberId") != null) {
+			    // 현재 로그인 사용자의 아이디
+			    String loginMemberId = (String) session.getAttribute("loginMemberId");
+			
+			    if (loginMemberId.equals(board.getMemberId())) {
+			%>
 			<div>
 	             <a href="<%=request.getContextPath()%>/board/modifyBoard.jsp?boardNo=<%=boardNo%>" class="btn btn-outline-danger">수정</a>
 				 <a href="<%=request.getContextPath()%>/board/removeBoard.jsp?boardNo=<%=boardNo%>" class="btn btn-outline-danger">삭제</a>
 			</div>
-		<%
-			} 
-		%>
+			<%
+					} 
+				}
+			%>
 <!---------------------------3-2 [시작] comment 입력 --------------------- -->
 		<% // 로그인 사용자만 수정,삭제,댓글입력허용
 		if(session.getAttribute("loginMemberId") != null) {
-			
 			// 현재 로그인 사용자의 아이디
 			String loginMemberId = (String)session.getAttribute("loginMemberId");
 		%>
@@ -218,22 +223,40 @@
                <td><%=c.getMemberId()%></td>
                <td><%=c.getCreatedate()%></td>
                <td><%=c.getUpdatedate()%></td>
+             <% // 본인이 작성한 댓글만 수정,삭제허용
+			if (session.getAttribute("loginMemberId") != null) {
+			    // 현재 로그인 사용자의 아이디
+			    String loginMemberId = (String) session.getAttribute("loginMemberId");
+			
+			    if (loginMemberId.equals(c.getMemberId())) {
+			%>
                <td><a href="<%=request.getContextPath()%>/comment/modifyComment.jsp?commentNo=<%=c.getCommentNo()%>" class="btn btn-outline-danger">수정</a></td>
 			   <td><a href="<%=request.getContextPath()%>/comment/removeCommentAction.jsp?commentNo=<%=c.getCommentNo()%>" class="btn btn-outline-danger">삭제</a></td>
+           	<%
+					} 
+				}
+			%>
             </tr>
 	<%	
 			}
 		%>
 	</table>
-	<div class="container text-center">
-		<a href="<%=request.getContextPath()%>/board/boardOne.jsp?boardNo=<%=boardNo%>&currentPage=<%=currentPage-1%>" class="btn btn-outline-dark">
-			이전
-		</a>
-		<%=currentPage%>
-		<a href="<%=request.getContextPath()%>/board/boardOne.jsp?boardNo=<%=boardNo%>&currentPage=<%=currentPage+1%>" class="btn btn-outline-dark">
-			다음
-		</a>
+			<% if(currentPage > 1) {%>
+			<a href="<%=request.getContextPath()%>/board/boardOne.jsp?boardNo=<%=boardNo%>&currentPage=<%=currentPage-1%>" class="btn btn-outline-dark">
+				이전
+			</a>
+			<% } %>
+			<%=currentPage%>
+			<% if( currentPage < lastPage) {%>
+			<a href="<%=request.getContextPath()%>/board/boardOne.jsp?boardNo=<%=boardNo%>&currentPage=<%=currentPage+1%>" class="btn btn-outline-dark">
+				다음
+			</a>
+			<% } %>
+		</div>
+		<div>
+	      <jsp:include page="/inc/copyright.jsp"></jsp:include>
+	   </div>
 	</div>
-	</div>
+</div>
 </body>
 </html>
