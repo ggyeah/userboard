@@ -15,8 +15,7 @@
 <meta charset="UTF-8">
 <title>updatePwForm</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/main.css" />
-
+<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/home.css" />
 </head>
 <body class="is-preload">
 	<header id="header">

@@ -52,17 +52,25 @@
 			subMenuList.add(m);
 		}
 		// -------------------------2) 페이징--------------------------
-		
-		//출력할 총행의 수 
-		String totalRowSql = "select count(*) from board";
-		PreparedStatement totalRowStmt = conn.prepareStatement(totalRowSql);
-		ResultSet totalRowRs = totalRowStmt.executeQuery();
-		// 총 행수
 		int totalRow = 0;
-		
-		if(totalRowRs.next()) {
-			totalRow = totalRowRs.getInt(1); // totalRowRs.getInt("count(*)")
-		}  
+		if (!searchWord.equals("")) {
+		    // 검색어를 포함한 총 행의 수 구하는 쿼리
+		    String totalRowSql = "SELECT COUNT(*) FROM board WHERE board_title LIKE ?";
+		    PreparedStatement totalRowStmt = conn.prepareStatement(totalRowSql);
+		    totalRowStmt.setString(1, "%" + searchWord + "%");
+		    ResultSet totalRowRs = totalRowStmt.executeQuery();
+		    if (totalRowRs.next()) {
+		        totalRow = totalRowRs.getInt(1); // totalRowRs.getInt("count(*)")
+		    }
+		} else {
+		    // 검색어가 없는 경우 처리하는 쿼리
+		    String totalRowSql = "SELECT COUNT(*) FROM board";
+		    PreparedStatement totalRowStmt = conn.prepareStatement(totalRowSql);
+		    ResultSet totalRowRs = totalRowStmt.executeQuery();
+		    if (totalRowRs.next()) {
+		        totalRow = totalRowRs.getInt(1); // totalRowRs.getInt("count(*)")
+		    }
+		}
 
 	 	//페이지당 출력할 행의 수
 		int rowPerPage = 10;
@@ -177,53 +185,6 @@
 <title>home</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/home.css" />
-<!-- 카카오 스크립트 -->
-<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-<script>
-Kakao.init('40d99dc72b249497642067882500ca18'); //발급받은 키 중 javascript키를 사용해준다.
-console.log(Kakao.isInitialized()); 
-//카카오로그인
-function kakaoLogin() {
-    Kakao.Auth.login({
-      success: function (response) {
-        Kakao.API.request({
-          url: '/v2/user/me',
-          success: function (response) {
-              // 사용자 정보에서 원하는 값 추출
-              var username = response.properties.nickname;
-              var email = response.kakao_account.email;
-
-              // 원하는 값들을 저장 또는 활용
-              console.log('닉네임:', username);
-              console.log('이메일:', email);
-              // 여기서 원하는 대로 저장하거나 활용할 수 있습니다.
-          },
-          fail: function (error) {
-            console.log(error)
-          },
-        })
-      },
-      fail: function (error) {
-        console.log(error)
-      },
-    })
-  }
-//카카오로그아웃  
-function kakaoLogout() {
-    if (Kakao.Auth.getAccessToken()) {
-      Kakao.API.request({
-        url: '/v1/user/unlink',
-        success: function (response) {
-           console.log(response)
-        },
-        fail: function (error) {
-          console.log(error)
-        },
-      })
-      Kakao.Auth.setAccessToken(undefined)
-    }
-  }  
-</script>
 </head>
 <body class="is-preload">
 <!-- Wrapper -->
@@ -254,22 +215,28 @@ function kakaoLogout() {
 				 </header>
 			     <!-- Banner -->
 				<div class="table-wrapper">
+				<%
+				// boardList가 비어있는 경우에 대한 처리 (검색결과가 없을경우)
+				if (boardList.isEmpty()) {
+				    out.println("검색 결과가 없습니다.");
+				} else {
+				%>
 		  		 <table>
 					<tr>
 						<th>
-							 <a href="./home.jsp?col=board_no&ascDesc=ASC&boardNo=<%=boardList.get(0).getBoardNo()%>&localName=<%=localName%>">&#11014;</a>
+							 <a href="./home.jsp?col=board_no&ascDesc=ASC&boardNo=<%=boardList.get(0).getBoardNo()%>&localName=<%=localName%>&searchWord=<%=searchWord%>">&#11014;</a>
 								board_no
-							 <a href="./home.jsp?col=board_no&ascDesc=Desc&boardNo=<%=boardList.get(0).getBoardNo()%>&localName=<%=localName%>">&#11015;</a>
+							 <a href="./home.jsp?col=board_no&ascDesc=Desc&boardNo=<%=boardList.get(0).getBoardNo()%>&localName=<%=localName%>&searchWord=<%=searchWord%>">&#11015;</a>
 						</th>
 						<th>
-							 <a href="./home.jsp?col=local_name&ascDesc=ASC&localName=<%=boardList.get(0).getLocalName()%>&localName=<%=localName%>">&#11014;</a>
+							 <a href="./home.jsp?col=local_name&ascDesc=ASC&localName=<%=boardList.get(0).getLocalName()%>&localName=<%=localName%>&searchWord=<%=searchWord%>">&#11014;</a>
 								local_name
-							<a href="./home.jsp?col=local_name&ascDesc=Desc&boardNo=<%=boardList.get(0).getLocalName()%>&localName=<%=localName%>">&#11015;</a>
+							<a href="./home.jsp?col=local_name&ascDesc=Desc&boardNo=<%=boardList.get(0).getLocalName()%>&localName=<%=localName%>&searchWord=<%=searchWord%>">&#11015;</a>
 						</th>
 						<th>
-							<a href="./home.jsp?col=board_title&ascDesc=ASC&boardTitle=<%=boardList.get(0).getBoardTitle()%>&localName=<%=localName%>">&#11014;</a>
+							<a href="./home.jsp?col=board_title&ascDesc=ASC&boardTitle=<%=boardList.get(0).getBoardTitle()%>&localName=<%=localName%>&searchWord=<%=searchWord%>">&#11014;</a>
 								board_title
-							<a href="./home.jsp?col=board_title&ascDesc=Desc&boardTitle=<%=boardList.get(0).getBoardTitle()%>&localName=<%=localName%>">&#11015;</a>
+							<a href="./home.jsp?col=board_title&ascDesc=Desc&boardTitle=<%=boardList.get(0).getBoardTitle()%>&localName=<%=localName%>&searchWord=<%=searchWord%>">&#11015;</a>
 						</th>
 					</tr>
 					<%
@@ -294,6 +261,9 @@ function kakaoLogout() {
 						}
 					%>
 				</table>
+					<%
+						}
+					%>
 				<!----------------------- 검색기능 ---------------------->
 					<form method="get" action="./home.jsp">
 						<div class="row gtr-uniform">
@@ -301,6 +271,7 @@ function kakaoLogout() {
 								<input type="hidden" name="localName" value="<%=localName%>">
 								<input type="hidden" name="ascDesc" value="<%=ascDesc%>">
 								<input type="hidden" name="col" value="<%=col%>">
+								<input type="hidden" name="currentPage" value="<%=currentPage%>">
 								<input type="text" name="searchWord" value="<%=searchWord%>" placeholder="Search">
 							</div>
 							<div class="col-6 col-12-xsmall">
@@ -313,7 +284,7 @@ function kakaoLogout() {
 						<% //현재 페이지가 페이지네이션 숫자 범위를 넘어섰을 때만 이전 버튼이 표시
 			     			 if(currentPage > pagePerPage) {
 			   			%>	
-							<li><a href="./home.jsp?currentPage=<%=beginPage-10%>&localName=<%=localName%>"  class="button">이전</a></li>
+							<li><a href="./home.jsp?currentPage=<%=beginPage-10%>&localName=<%=localName%>&col=<%=col%>&ascDesc=<%=ascDesc%>&searchWord<%=searchWord%>"  class="button">이전</a></li>
 					   	<%
 			     			} for(int i = beginPage; i <= endPage; i++){
 			        	if(i==currentPage){
@@ -322,13 +293,13 @@ function kakaoLogout() {
 					    <%
 					        	}else{
 					   	%>  
-					   		<li><a href="./home.jsp?currentPage=<%=i%>&localName=<%=localName%>" class="page"><%=i%></a></li>
+					   		<li><a href="./home.jsp?currentPage=<%=i%>&localName=<%=localName%>&col=<%=col%>&ascDesc=<%=ascDesc%>&searchWord=<%=searchWord%>" class="page"><%=i%></a></li>
 					   	 <% 
 				       			}
 				       		} //현재 페이지가 마지막 페이지를 넘지 않았을 때만 다음 버튼이 표시
 				      if(currentPage < (lastPage-pagePerPage+1)) {  
 					  	 %>
-							<li><a href="./home.jsp?currentPage=<%=endPage+1%>&localName=<%=localName%>" class="button">다음</a></li>
+							<li><a href="./home.jsp?currentPage=<%=endPage+1%>&localName=<%=localName%>&col=<%=col%>&ascDesc=<%=ascDesc%>&searchWord<%=searchWord%>" class="button">다음</a></li>
 						 <%
 			      			}
 			   			 %>
@@ -360,18 +331,6 @@ function kakaoLogout() {
 	               </table>
 		               <button type="submit">로그인</button>
 		            </form>
-					<ul>
-						<li onclick="kakaoLogin();">
-						   <a href="javascript:void(0)">
-						       <span>카카오 로그인</span>
-						   </a>
-						</li>
-						<li onclick="kakaoLogout();">
-						      <a href="javascript:void(0)">
-						          <span>카카오 로그아웃</span>
-						      </a>
-						</li>
-					</ul>
 		            
 			      <%   
 			         }else{
