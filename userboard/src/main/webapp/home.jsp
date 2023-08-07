@@ -25,6 +25,7 @@
 			searchWord = request.getParameter("searchWord");
 		}
 		
+		
 		//2. 모델계층
 		//db연결
 		String driver = "org.mariadb.jdbc.Driver";
@@ -134,7 +135,7 @@
 			    }
 		} else {
 		    if (!searchWord.equals("")) {
-		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? AND board_title LIKE ? ORDER BY"+col+" "+ascDesc+"  LIMIT ?, ?";
+		        boardSql = "SELECT board_no boardNo, local_name localName, board_title boardTitle, createdate FROM board WHERE local_name = ? AND board_title LIKE ? ORDER BY "+col+" "+ascDesc+"  LIMIT ?, ?";
 		        boardStmt = conn.prepareStatement(boardSql);
 		        boardStmt.setString(1, localName);
 		        boardStmt.setString(2, "%" + searchWord + "%");
@@ -176,6 +177,53 @@
 <title>home</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/home.css" />
+<!-- 카카오 스크립트 -->
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+Kakao.init('40d99dc72b249497642067882500ca18'); //발급받은 키 중 javascript키를 사용해준다.
+console.log(Kakao.isInitialized()); 
+//카카오로그인
+function kakaoLogin() {
+    Kakao.Auth.login({
+      success: function (response) {
+        Kakao.API.request({
+          url: '/v2/user/me',
+          success: function (response) {
+              // 사용자 정보에서 원하는 값 추출
+              var username = response.properties.nickname;
+              var email = response.kakao_account.email;
+
+              // 원하는 값들을 저장 또는 활용
+              console.log('닉네임:', username);
+              console.log('이메일:', email);
+              // 여기서 원하는 대로 저장하거나 활용할 수 있습니다.
+          },
+          fail: function (error) {
+            console.log(error)
+          },
+        })
+      },
+      fail: function (error) {
+        console.log(error)
+      },
+    })
+  }
+//카카오로그아웃  
+function kakaoLogout() {
+    if (Kakao.Auth.getAccessToken()) {
+      Kakao.API.request({
+        url: '/v1/user/unlink',
+        success: function (response) {
+           console.log(response)
+        },
+        fail: function (error) {
+          console.log(error)
+        },
+      })
+      Kakao.Auth.setAccessToken(undefined)
+    }
+  }  
+</script>
 </head>
 <body class="is-preload">
 <!-- Wrapper -->
@@ -252,6 +300,7 @@
 							<div class="col-6 col-12-xsmall">
 								<input type="hidden" name="localName" value="<%=localName%>">
 								<input type="hidden" name="ascDesc" value="<%=ascDesc%>">
+								<input type="hidden" name="col" value="<%=col%>">
 								<input type="text" name="searchWord" value="<%=searchWord%>" placeholder="Search">
 							</div>
 							<div class="col-6 col-12-xsmall">
@@ -311,6 +360,19 @@
 	               </table>
 		               <button type="submit">로그인</button>
 		            </form>
+					<ul>
+						<li onclick="kakaoLogin();">
+						   <a href="javascript:void(0)">
+						       <span>카카오 로그인</span>
+						   </a>
+						</li>
+						<li onclick="kakaoLogout();">
+						      <a href="javascript:void(0)">
+						          <span>카카오 로그아웃</span>
+						      </a>
+						</li>
+					</ul>
+		            
 			      <%   
 			         }else{
 			        	 String loginMemberId = (String)session.getAttribute("loginMemberId");
